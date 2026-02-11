@@ -113,23 +113,61 @@
             background: rgba(255,255,255,0.2);
             border-color: #fff;
         }
+
+        /* DS Mode Styles */
+        .ds-mode .pokedex-frame {
+            background: #222 !important;
+            max-width: 500px;
+            border-radius: 20px;
+        }
+
+        .ds-mode .grid {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ds-mode .screen-container {
+            border-color: #111;
+            margin-bottom: 1rem;
+        }
+
+        #nintendo-logo {
+            display: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .ds-mode #nintendo-logo {
+            display: inline-block;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <div class="pokedex-frame">
-        <div class="flex items-center mb-6">
-            <div class="w-16 h-16 bg-blue-400 border-4 border-white rounded-full shadow-inner flex items-center justify-center mr-4">
-                <div class="w-12 h-12 bg-blue-300 rounded-full animate-pulse"></div>
-            </div>
-            <div>
-                <div class="flex space-x-2">
-                    <span class="led led-red"></span>
-                    <span class="led led-yellow"></span>
-                    <span class="led led-green"></span>
+    <div id="main-container" class="transition-all duration-500">
+        <div class="pokedex-frame">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-16 h-16 bg-blue-400 border-4 border-white rounded-full shadow-inner flex items-center justify-center mr-4">
+                        <div class="w-12 h-12 bg-blue-300 rounded-full animate-pulse"></div>
+                    </div>
+                    <div>
+                        <div class="flex space-x-2">
+                            <span class="led led-red"></span>
+                            <span class="led led-yellow"></span>
+                            <span class="led led-green"></span>
+                        </div>
+                        <h1 class="pixel-font mt-2">SHINY PATCHER v1.1</h1>
+                    </div>
                 </div>
-                <h1 class="pixel-font mt-2">SHINY PATCHER v1.0</h1>
+                <div id="nintendo-logo">Nintendo DS</div>
             </div>
-        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Left Screen: Controls -->
@@ -196,88 +234,102 @@
                 <div class="w-12 h-12 rounded-full bg-neutral-800 shadow-lg border-b-4 border-black"></div>
             </div>
         </div>
-    </div>
-
-    <script>
-        const slider = document.getElementById('threshold-slider');
-        const hexVal = document.getElementById('hex-val');
-        const oddsVal = document.getElementById('odds-val');
-        const dropZone = document.getElementById('drop-zone');
-        const romInput = document.getElementById('rom-input');
-        const fileName = document.getElementById('file-name');
-        const patchBtn = document.getElementById('patch-btn');
-        const statusBox = document.getElementById('status-box');
-        const downloadLink = document.getElementById('download-link');
-
-        slider.oninput = function() {
-            const val = parseInt(this.value);
-            hexVal.innerText = '0x' + val.toString(16).toUpperCase().padStart(2, '0');
-            const odds = Math.round(65536 / val);
-            oddsVal.innerText = `1/${odds}`;
-        }
-
-        dropZone.onclick = () => romInput.click();
-
-        romInput.onchange = (e) => {
-            if (e.target.files.length > 0) {
-                fileName.innerText = e.target.files[0].name;
+            </div>
+        </div>
+    
+        <script>
+            const mainContainer = document.getElementById('main-container');
+            const slider = document.getElementById('threshold-slider');
+            const hexVal = document.getElementById('hex-val');
+            const oddsVal = document.getElementById('odds-val');
+            const dropZone = document.getElementById('drop-zone');
+            const romInput = document.getElementById('rom-input');
+            const fileName = document.getElementById('file-name');
+            const patchBtn = document.getElementById('patch-btn');
+            const statusBox = document.getElementById('status-box');
+            const downloadLink = document.getElementById('download-link');
+    
+            slider.oninput = function() {
+                const val = parseInt(this.value);
+                hexVal.innerText = '0x' + val.toString(16).toUpperCase().padStart(2, '0');
+                const odds = Math.round(65536 / val);
+                oddsVal.innerText = `1/${odds}`;
             }
-        }
-
-        dropZone.ondragover = (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        }
-
-        dropZone.ondragleave = () => {
-            dropZone.classList.remove('dragover');
-        }
-
-        dropZone.ondrop = (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) {
-                romInput.files = e.dataTransfer.files;
-                fileName.innerText = e.dataTransfer.files[0].name;
-            }
-        }
-
-        patchBtn.onclick = async () => {
-            if (romInput.files.length === 0) {
-                logStatus('ERROR: NO ROM SELECTED');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('rom', romInput.files[0]);
-            formData.append('threshold', slider.value);
-
-            logStatus('PATCHING IN PROGRESS...');
-            patchBtn.disabled = true;
-            downloadLink.classList.add('hidden');
-
-            try {
-                const response = await fetch('/patch', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-
-                if (response.ok) {
-                    logStatus('SUCCESS: PATCH APPLIED!');
-                    downloadLink.href = data.download_url;
-                    downloadLink.classList.remove('hidden');
-                } else {
-                    logStatus('ERROR: ' + data.error);
+    
+            dropZone.onclick = () => romInput.click();
+    
+            romInput.onchange = (e) => {
+                if (e.target.files.length > 0) {
+                    fileName.innerText = e.target.files[0].name;
                 }
-            } catch (err) {
-                logStatus('ERROR: CONNECTION FAILED');
-            } finally {
-                patchBtn.disabled = false;
             }
-        }
-
-        function logStatus(msg) {
+    
+            dropZone.ondragover = (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            }
+    
+            dropZone.ondragleave = () => {
+                dropZone.classList.remove('dragover');
+            }
+    
+            dropZone.ondrop = (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    romInput.files = e.dataTransfer.files;
+                    fileName.innerText = e.dataTransfer.files[0].name;
+                }
+            }
+    
+            patchBtn.onclick = async () => {
+                if (romInput.files.length === 0) {
+                    logStatus('ERROR: NO ROM SELECTED');
+                    return;
+                }
+    
+                const formData = new FormData();
+                formData.append('rom', romInput.files[0]);
+                formData.append('threshold', slider.value);
+    
+                logStatus('PATCHING IN PROGRESS...');
+                patchBtn.disabled = true;
+                downloadLink.classList.add('hidden');
+    
+                try {
+                    const response = await fetch('/patch', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+    
+                    if (data.game_type === 'NDS') {
+                        mainContainer.classList.add('ds-mode');
+                    } else {
+                        mainContainer.classList.remove('ds-mode');
+                    }
+    
+                    if (response.ok) {
+                        if (data.logs) {
+                            data.logs.forEach(msg => logStatus(msg));
+                        }
+                        logStatus('SUCCESS: PATCH APPLIED!');
+                        downloadLink.href = data.download_url;
+                        downloadLink.classList.remove('hidden');
+                    } else {
+                        if (data.logs) {
+                            data.logs.forEach(msg => logStatus(msg));
+                        }
+                        logStatus('ERROR: ' + data.error);
+                    }
+                } catch (err) {
+                    logStatus('ERROR: CONNECTION FAILED');
+                    console.error(err);
+                } finally {
+                    patchBtn.disabled = false;
+                }
+            }
+            function logStatus(msg) {
             const p = document.createElement('p');
             p.innerText = `> ${msg}`;
             statusBox.appendChild(p);
