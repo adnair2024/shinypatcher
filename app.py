@@ -40,7 +40,11 @@ def find_gba_offset(file_path):
         data = f.read()
         index = data.find(GBA_SIGNATURE)
         if index != -1:
-            return index + 6
+            # Check a few bytes ahead for the '8' threshold
+            for check_offset in range(6, 12):
+                if index + check_offset < len(data) and data[index + check_offset] == 0x08:
+                    return index + check_offset
+            return index + 6 # Fallback to original logic
     return None
 
 def get_game_info(file_path):
@@ -139,7 +143,8 @@ def patch_nds(file_path, patch_value, logs):
         logs.append("[*] Opening NDS ROM with ndspy...")
         rom = ndspy.rom.NintendoDSRom.fromFile(file_path)
         
-        game_code = rom.gameCode.decode('ascii', errors='ignore')
+        # In ndspy, the 4-character code is 'idCode', not 'gameCode'
+        game_code = rom.idCode.decode('ascii', errors='ignore')
         offset = OFFSETS.get(game_code, 0x70080)
         
         logs.append(f"[*] Accessing ARM9 (Handling encryption/compression)...")
@@ -154,6 +159,10 @@ def patch_nds(file_path, patch_value, logs):
         old_val = arm9[offset]
         arm9[offset] = patch_value
         rom.arm9 = arm9
+        
+        # Ensure ARM9 stays compressed for compatibility if supported by the rom object
+        if hasattr(rom, 'setArm9Compression'):
+            rom.setArm9Compression(True)
         
         logs.append("[*] Rebuilding ROM...")
         rom.saveToFile(file_path)
@@ -234,7 +243,7 @@ def patch():
             
             zip_out_path = os.path.join(app.config['PATCHED_FOLDER'], f"patched_{session_id}.zip")
             all_logs.append(f"[*] Packaging {len(patched_files)} ROMs into ZIP...")
-            with zip_out_file := zipfile.ZipFile(zip_out_path, 'w'):
+            with zipfile.ZipFile(zip_out_path, 'w') as zip_out_file:
                 for pf in patched_files:
                     zip_out_file.write(pf, os.path.relpath(pf, extract_dir))
             

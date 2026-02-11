@@ -5,336 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shiny % Patcher</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --hgss-red: #e63946;
-            --hgss-dark-red: #9d0208;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-        }
-
         body {
-            background: radial-gradient(circle at center, var(--hgss-red), var(--hgss-dark-red));
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1a1c2c 0%, #4a192c 100%);
             color: white;
-            overflow-x: hidden;
-        }
-
-        .pixel-font {
-            font-family: 'Press+Start+2P', cursive;
-            font-size: 0.75rem;
-        }
-
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .pokedex-frame {
-            position: relative;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            border: 10px solid #333;
-            border-radius: 40px;
-            background: #d90429;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 10px 10px 0 rgba(0,0,0,0.2);
-        }
-
-        .screen-container {
-            background: #222;
-            padding: 1rem;
-            border-radius: 15px;
-            border: 4px solid #555;
-        }
-
-        .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            background: rgba(255,255,255,0.2);
-            outline: none;
-            transition: opacity .2s;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        .pokedex-btn {
-            background: #333;
-            border-bottom: 4px solid #000;
-            transition: all 0.1s;
-        }
-
-        .pokedex-btn:active {
-            border-bottom: 0px solid #000;
-            transform: translateY(4px);
-        }
-
-        .led {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-            box-shadow: 0 0 10px rgba(255,255,255,0.2);
-            animation: blink 2s infinite;
-        }
-
-        .led-green { background: #00ff00; animation-delay: 0s; }
-        .led-red { background: #ff0000; animation-delay: 0.5s; }
-        .led-yellow { background: #ffff00; animation-delay: 1s; }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; filter: brightness(1.2); }
-            50% { opacity: 0.4; filter: brightness(0.8); }
-        }
-
-        #drop-zone {
-            transition: all 0.3s;
-        }
-
-        #drop-zone.dragover {
-            background: rgba(255,255,255,0.2);
-            border-color: #fff;
-        }
-
-        /* DS Mode Styles */
-        .ds-mode .pokedex-frame {
-            background: #222 !important;
-            max-width: 500px;
-            border-radius: 20px;
-        }
-
-        .ds-mode .grid {
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-
-        .ds-mode .screen-container {
-            border-color: #111;
-            margin-bottom: 1rem;
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
         }
-
-        #nintendo-logo {
-            display: none;
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            letter-spacing: -1px;
-            color: #fff;
-            border: 2px solid #fff;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            text-transform: uppercase;
-        }
-
-        .ds-mode #nintendo-logo {
-            display: inline-block;
+        input[type="range"] {
+            accent-color: #ff3e3e;
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div id="main-container" class="transition-all duration-500">
-        <div class="pokedex-frame">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center">
-                    <div class="w-16 h-16 bg-blue-400 border-4 border-white rounded-full shadow-inner flex items-center justify-center mr-4">
-                        <div class="w-12 h-12 bg-blue-300 rounded-full animate-pulse"></div>
-                    </div>
-                    <div>
-                        <div class="flex space-x-2">
-                            <span class="led led-red"></span>
-                            <span class="led led-yellow"></span>
-                            <span class="led led-green"></span>
-                        </div>
-                        <h1 class="pixel-font mt-2">SHINY PATCHER v1.1</h1>
-                    </div>
-                </div>
-                <div id="nintendo-logo">Nintendo DS</div>
+<body>
+    <div class="glass p-8 w-full max-w-md shadow-2xl mx-4">
+        <h1 class="text-2xl font-semibold mb-2 text-center">Shiny % Patcher</h1>
+        <p class="text-gray-400 text-sm text-center mb-8">Gen 3 & 4 ROM Modder</p>
+
+        <form id="patchForm" class="space-y-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">Target Odds (1 in X)</label>
+                <input type="range" name="threshold" id="thresholdRange" min="1" max="8192" value="256" 
+                       class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                       oninput="this.nextElementSibling.value = this.value">
+                <output class="block text-center text-xl font-bold text-red-400">256</output>
             </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Left Screen: Controls -->
-            <div class="screen-container">
-                <div class="glass-panel p-6 h-full">
-                    <label class="pixel-font block mb-4">SHINY THRESHOLD</label>
-                    <input type="range" min="1" max="255" value="8" class="slider mb-4" id="threshold-slider">
-                    
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="text-xs opacity-70">Odds: <span id="odds-val">1/8192</span></span>
-                        <span class="pixel-font text-lg" id="hex-val">0x08</span>
-                    </div>
-
-                    <div id="drop-zone" class="border-2 border-dashed border-white/30 rounded-xl p-8 text-center cursor-pointer hover:border-white/60">
-                        <input type="file" id="rom-input" class="hidden" accept=".gba,.nds,.zip">
-                        <div class="pixel-font text-[10px] leading-loose">
-                            TAP OR DROP ROM<br>
-                            (.GBA, .NDS, .ZIP)
-                        </div>
-                    </div>
-                    
-                    <div id="file-name" class="mt-4 text-xs truncate opacity-60 text-center"></div>
-                </div>
+            <div class="border-2 border-dashed border-gray-600 rounded-xl p-6 text-center hover:border-red-400 transition-colors">
+                <input type="file" name="rom" id="fileInput" class="hidden" accept=".gba,.nds,.zip">
+                <label for="fileInput" class="cursor-pointer">
+                    <span class="block text-sm text-gray-400">Drop ROM or ZIP here</span>
+                    <span class="text-xs text-gray-500">(FireRed, Emerald, HGSS)</span>
+                </label>
             </div>
 
-            <!-- Right Screen: Info & Output -->
-            <div class="screen-container">
-                <div class="glass-panel p-6 h-full flex flex-col justify-between">
-                    <div>
-                        <label class="pixel-font block mb-4">STATUS</label>
-                        <div id="status-box" class="bg-black/40 rounded p-4 h-32 overflow-y-auto text-xs font-mono mb-4">
-                            READY TO PATCH...
-                        </div>
-                        
-                        <label class="pixel-font block mb-2 text-[10px] opacity-70">SUPPORTED GAMES</label>
-                        <ul class="text-[10px] opacity-50 list-disc list-inside font-mono">
-                            <li>Fire Red v1.0 (GBA)</li>
-                            <li>Emerald (GBA)</li>
-                            <li>HG/SS US (NDS)</li>
-                        </ul>
-                    </div>
+            <button type="submit" id="submitBtn" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-red-500/20">
+                Patch ROM
+            </button>
+        </form>
 
-                    <div class="mt-6">
-                        <button id="patch-btn" class="w-full pokedex-btn py-4 rounded-xl pixel-font text-white hover:bg-neutral-700 disabled:opacity-50">
-                            GENERATE PATCH
-                        </button>
-                        
-                        <a id="download-link" href="#" class="hidden w-full bg-green-600 border-bottom-4 border-green-900 py-4 rounded-xl pixel-font text-white text-center block mt-4 hover:bg-green-500">
-                            DOWNLOAD ROM
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Bottom D-Pad Decoration -->
-        <div class="mt-8 flex justify-between items-center px-4">
-            <div class="relative w-24 h-24">
-                <div class="absolute top-1/2 left-0 w-full h-8 bg-neutral-800 -translate-y-1/2 rounded"></div>
-                <div class="absolute left-1/2 top-0 h-full w-8 bg-neutral-800 -translate-x-1/2 rounded"></div>
-            </div>
-            <div class="flex space-x-4">
-                <div class="w-12 h-12 rounded-full bg-neutral-800 shadow-lg border-b-4 border-black"></div>
-                <div class="w-12 h-12 rounded-full bg-neutral-800 shadow-lg border-b-4 border-black"></div>
-            </div>
-        </div>
-            </div>
-        </div>
-    
-        <script>
-            const mainContainer = document.getElementById('main-container');
-            const slider = document.getElementById('threshold-slider');
-            const hexVal = document.getElementById('hex-val');
-            const oddsVal = document.getElementById('odds-val');
-            const dropZone = document.getElementById('drop-zone');
-            const romInput = document.getElementById('rom-input');
-            const fileName = document.getElementById('file-name');
-            const patchBtn = document.getElementById('patch-btn');
-            const statusBox = document.getElementById('status-box');
-            const downloadLink = document.getElementById('download-link');
-    
-            slider.oninput = function() {
-                const val = parseInt(this.value);
-                hexVal.innerText = '0x' + val.toString(16).toUpperCase().padStart(2, '0');
-                const odds = Math.round(65536 / val);
-                oddsVal.innerText = `1/${odds}`;
-            }
-    
-            dropZone.onclick = () => romInput.click();
-    
-            romInput.onchange = (e) => {
-                if (e.target.files.length > 0) {
-                    fileName.innerText = e.target.files[0].name;
+        <div id="status" class="mt-6 text-[10px] font-mono bg-black/30 rounded-lg p-4 hidden max-h-48 overflow-y-auto leading-relaxed"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('patchForm');
+        const status = document.getElementById('status');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            status.classList.remove('hidden');
+            status.innerHTML = "[*] Uploading and processing...";
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50');
+            
+            const formData = new FormData(form);
+            try {
+                const response = await fetch('/patch', { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.error) {
+                    status.innerHTML = `<span class="text-red-400">Error: ${result.error}</span><br>` + (result.logs ? result.logs.join('<br>') : '');
+                } else {
+                    status.innerHTML = `<span class="text-green-400">Success!</span><br>` + (result.logs ? result.logs.join('<br>') : '');
+                    const downloadBtn = document.createElement('a');
+                    downloadBtn.href = result.download_url;
+                    downloadBtn.className = "w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-green-500/20 text-center block mt-4";
+                    downloadBtn.innerText = "Download Patched ROM";
+                    form.appendChild(downloadBtn);
                 }
+            } catch (err) {
+                status.innerHTML = `<span class="text-red-400">Error: Connection failed</span>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50');
             }
-    
-            dropZone.ondragover = (e) => {
-                e.preventDefault();
-                dropZone.classList.add('dragover');
+        };
+
+        // File name display
+        document.getElementById('fileInput').onchange = function() {
+            if (this.files[0]) {
+                this.nextElementSibling.querySelector('span:first-child').innerText = this.files[0].name;
             }
-    
-            dropZone.ondragleave = () => {
-                dropZone.classList.remove('dragover');
-            }
-    
-            dropZone.ondrop = (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) {
-                    romInput.files = e.dataTransfer.files;
-                    fileName.innerText = e.dataTransfer.files[0].name;
-                }
-            }
-    
-            patchBtn.onclick = async () => {
-                if (romInput.files.length === 0) {
-                    logStatus('ERROR: NO ROM SELECTED');
-                    return;
-                }
-    
-                const formData = new FormData();
-                formData.append('rom', romInput.files[0]);
-                formData.append('threshold', slider.value);
-    
-                logStatus('PATCHING IN PROGRESS...');
-                patchBtn.disabled = true;
-                downloadLink.classList.add('hidden');
-    
-                try {
-                    const response = await fetch('/patch', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await response.json();
-    
-                    if (data.game_type === 'NDS') {
-                        mainContainer.classList.add('ds-mode');
-                    } else {
-                        mainContainer.classList.remove('ds-mode');
-                    }
-    
-                    if (response.ok) {
-                        if (data.logs) {
-                            data.logs.forEach(msg => logStatus(msg));
-                        }
-                        logStatus('SUCCESS: PATCH APPLIED!');
-                        downloadLink.href = data.download_url;
-                        downloadLink.classList.remove('hidden');
-                    } else {
-                        if (data.logs) {
-                            data.logs.forEach(msg => logStatus(msg));
-                        }
-                        logStatus('ERROR: ' + data.error);
-                    }
-                } catch (err) {
-                    logStatus('ERROR: CONNECTION FAILED');
-                    console.error(err);
-                } finally {
-                    patchBtn.disabled = false;
-                }
-            }
-            function logStatus(msg) {
-            const p = document.createElement('p');
-            p.innerText = `> ${msg}`;
-            statusBox.appendChild(p);
-            statusBox.scrollTop = statusBox.scrollHeight;
-        }
+        };
     </script>
 </body>
 </html>
