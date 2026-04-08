@@ -18,12 +18,6 @@ A sophisticated, web-based ROM patching utility designed to modify shiny encount
 
 ---
 
-## 📸 Interface Preview
-
-*(Place a screenshot here of the glassmorphic Pokedex UI)*
-
----
-
 ## 🧬 Supported Games
 
 | Game | Platform | Region | Supported |
